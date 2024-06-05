@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin: 20px 0;
+        }
+        label, input, button {
+            display: block;
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #f0f0f0;
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <form id="challenge-form">
+            <label>
+                Enter a number (10-150):
+                <input type="number" id="number" min="10" max="150" required>
+            </label>
+            <label>
+                Enter a category:
+                <input type="text" id="category" required>
+            </label>
+            <button type="submit">Start Challenge</button>
+        </form>
+        <div id="challenge-area" style="display: none;">
+            <h2 id="challenge-title"></h2>
+            <input type="text" id="item-input" placeholder="Enter item">
+            <ul id="items-list"></ul>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('challenge-form');
+            const numberInput = document.getElementById('number');
+            const categoryInput = document.getElementById('category');
+            const challengeArea = document.getElementById('challenge-area');
+            const challengeTitle = document.getElementById('challenge-title');
+            const itemInput = document.getElementById('item-input');
+            const itemsList = document.getElementById('items-list');
+            let number = 0;
+            let category = '';
+            let items = [];
+            let timerStarted = false;
+            let startTime = 0;
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                number = parseInt(numberInput.value);
+                category = categoryInput.value.trim();
+                if (number >= 10 && number <= 150 && category) {
+                    form.style.display = 'none';
+                    challengeArea.style.display = 'block';
+                    challengeTitle.textContent = `Challenge: Name ${number} ${category}`;
+                } else {
+                    alert('Please enter a valid number and category.');
+                }
+            });
+
+            itemInput.addEventListener('keyup', (e) => {
+                if (!timerStarted) {
+                    timerStarted = true;
+                    startTime = Date.now();
+                }
+
+                if (e.key === 'Enter' && itemInput.value.trim()) {
+                    items.push(itemInput.value.trim());
+                    const listItem = document.createElement('li');
+                    listItem.textContent = itemInput.value.trim();
+                    itemsList.appendChild(listItem);
+                    itemInput.value = '';
+
+                    if (items.length >= number) {
+                        const endTime = Date.now();
+                        const timeTaken = (endTime - startTime) / 1000;
+                        alert(`Challenge Completed in ${timeTaken} seconds!`);
+                        // Save the challenge data here if needed, e.g., send to a server
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
