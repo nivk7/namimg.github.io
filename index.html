@@ -117,14 +117,13 @@
                     alert('Please enter a valid number and category.');
                 }
             });
-
             restartButton.addEventListener('click', () => {
                 form.style.display = 'block';
                 challengeArea.style.display = 'none';
                 itemInput.disabled = false;
-                items.clear();
-                itemsList.innerHTML = '';
-                timerDisplay.textContent = 'Time: 0 seconds';
+                items = [];
+                renderItems();
+                timerDisplay.textContent = 'Time: 00:00:00:000';
                 completionMessage.style.display = 'none';
                 restartButton.style.display = 'none';
                 timerStarted = false;
