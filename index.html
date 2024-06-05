@@ -118,19 +118,18 @@
                 }
             });
             
-            restartButton.addEventListener('click', () => {
-                form.style.display = 'block';
-                challengeArea.style.display = 'none';
-                itemInput.disabled = false;
-                items = [];
-                renderItems();
-                timerDisplay.textContent = 'Time: 00:00:00:000';
-                completionMessage.style.display = 'none';
-                restartButton.style.display = 'none';
-                timerStarted = false;
-                restartButton.style.display = 'none';
-                completionMessage.style.display = 'none';
-            });
+            function restartChallenge() {
+    form.style.display = 'block';
+    challengeArea.style.display = 'none';
+    itemInput.disabled = false;
+    items = [];
+    renderItems();
+    timerDisplay.textContent = 'Time: 00:00:00:000'; // Reset the timer display
+    completionMessage.style.display = 'none'; // Hide the completion message
+    restartButton.style.display = 'none'; // Hide the restart button
+    clearInterval(timerInterval); // Stop the timer
+    timerStarted = false; // Reset timer state
+}
 
             itemInput.addEventListener('keyup', (e) => {
                 if (!timerStarted) {
