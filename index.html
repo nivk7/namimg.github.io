@@ -26,6 +26,10 @@
             padding: 5px;
             border-radius: 5px;
         }
+        #timer {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -43,6 +47,7 @@
         </form>
         <div id="challenge-area" style="display: none;">
             <h2 id="challenge-title"></h2>
+            <div id="timer">Time: 0 seconds</div>
             <input type="text" id="item-input" placeholder="Enter item">
             <ul id="items-list"></ul>
         </div>
@@ -56,11 +61,13 @@
             const challengeTitle = document.getElementById('challenge-title');
             const itemInput = document.getElementById('item-input');
             const itemsList = document.getElementById('items-list');
+            const timerDisplay = document.getElementById('timer');
             let number = 0;
             let category = '';
-            let items = [];
+            let items = new Set();
             let timerStarted = false;
             let startTime = 0;
+            let timerInterval;
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -79,20 +86,31 @@
                 if (!timerStarted) {
                     timerStarted = true;
                     startTime = Date.now();
+                    timerInterval = setInterval(() => {
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        timerDisplay.textContent = `Time: ${elapsed} seconds`;
+                    }, 1000);
                 }
 
                 if (e.key === 'Enter' && itemInput.value.trim()) {
-                    items.push(itemInput.value.trim());
+                    const item = itemInput.value.trim();
+                    if (items.has(item)) {
+                        alert('Item already entered.');
+                        itemInput.value = '';
+                        return;
+                    }
+                    items.add(item);
                     const listItem = document.createElement('li');
-                    listItem.textContent = itemInput.value.trim();
+                    listItem.textContent = `${items.size}. ${item}`;
                     itemsList.appendChild(listItem);
                     itemInput.value = '';
 
-                    if (items.length >= number) {
+                    if (items.size >= number) {
+                        clearInterval(timerInterval);
                         const endTime = Date.now();
                         const timeTaken = (endTime - startTime) / 1000;
-                        alert(`Challenge Completed in ${timeTaken} seconds!`);
-                        // Save the challenge data here if needed, e.g., send to a server
+                        localStorage.setItem('timeTaken', timeTaken);
+                        window.location.href = 'completed.html';
                     }
                 }
             });
