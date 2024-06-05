@@ -68,7 +68,7 @@
             <ul id="items-list"></ul>
             <div id="completion-message">Challenge Completed!</div>
         </div>
-        <button id="restart-button" onclick="restartChallenge()">Restart Challenge</button>
+        <button id="restart-button">Restart Challenge</button>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -118,6 +118,18 @@
                 }
             });
 
+            restartButton.addEventListener('click', () => {
+                form.style.display = 'block';
+                challengeArea.style.display = 'none';
+                itemInput.disabled = false;
+                items.clear();
+                itemsList.innerHTML = '';
+                timerDisplay.textContent = 'Time: 0 seconds';
+                completionMessage.style.display = 'none';
+                restartButton.style.display = 'none';
+                timerStarted = false;
+            });
+
             itemInput.addEventListener('keyup', (e) => {
                 if (!timerStarted) {
                     timerStarted = true;
@@ -159,20 +171,6 @@
                 }
                 // Scroll to the last item
                 itemsList.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
-
-
-            function restartChallenge() {
-                form.style.display = 'block';
-                alert('rami');
-                challengeArea.style.display = 'none';
-                itemInput.disabled = false;
-                items = [];
-                renderItems();
-                timerDisplay.textContent = 'Time: 00:00:00:000';
-                completionMessage.style.display = 'none';
-                restartButton.style.display = 'block'; // Ensure the button is set to display
-                timerStarted = false;
             }
 
             function pad(num, size = 2) {
