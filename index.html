@@ -117,6 +117,7 @@
                     alert('Please enter a valid number and category.');
                 }
             });
+            
             restartButton.addEventListener('click', () => {
                 form.style.display = 'block';
                 challengeArea.style.display = 'none';
@@ -127,6 +128,8 @@
                 completionMessage.style.display = 'none';
                 restartButton.style.display = 'none';
                 timerStarted = false;
+                restartButton.style.display = 'none';
+                completionMessage.style.display = 'none';
             });
 
             itemInput.addEventListener('keyup', (e) => {
