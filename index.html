@@ -164,13 +164,14 @@
 
             function restartChallenge() {
                 form.style.display = 'block';
+                alert('rami');
                 challengeArea.style.display = 'none';
                 itemInput.disabled = false;
                 items = [];
                 renderItems();
                 timerDisplay.textContent = 'Time: 00:00:00:000';
                 completionMessage.style.display = 'none';
-                restartButton.style.display = 'block';
+                restartButton.style.display = 'block'; // Ensure the button is set to display
                 timerStarted = false;
             }
 
