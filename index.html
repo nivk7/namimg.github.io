@@ -36,6 +36,13 @@
             margin-top: 20px;
             display: none;
         }
+        #restart-button {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -57,6 +64,7 @@
             <input type="text" id="item-input" placeholder="Enter item">
             <ul id="items-list"></ul>
             <div id="completion-message">Challenge Completed!</div>
+            <button id="restart-button">Restart Challenge</button>
         </div>
     </div>
     <script>
@@ -70,12 +78,24 @@
             const itemsList = document.getElementById('items-list');
             const timerDisplay = document.getElementById('timer');
             const completionMessage = document.getElementById('completion-message');
+            const restartButton = document.getElementById('restart-button');
+
             let number = 0;
             let category = '';
             let items = new Set();
             let timerStarted = false;
             let startTime = 0;
             let timerInterval;
+
+            // Load saved values if they exist
+            const savedNumber = localStorage.getItem('number');
+            const savedCategory = localStorage.getItem('category');
+            if (savedNumber) {
+                numberInput.value = savedNumber;
+            }
+            if (savedCategory) {
+                categoryInput.value = savedCategory;
+            }
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -85,6 +105,10 @@
                     form.style.display = 'none';
                     challengeArea.style.display = 'block';
                     challengeTitle.textContent = `Challenge: Name ${number} ${category}`;
+
+                    // Save the values to localStorage
+                    localStorage.setItem('number', number);
+                    localStorage.setItem('category', category);
                 } else {
                     alert('Please enter a valid number and category.');
                 }
@@ -114,12 +138,23 @@
 
                     if (items.size >= number) {
                         clearInterval(timerInterval);
-                        const endTime = Date.now();
-                        const timeTaken = (endTime - startTime) / 1000;
-                        timerDisplay.textContent += ` (Completed in ${timeTaken} seconds!)`;
+                        itemInput.disabled = true;
                         completionMessage.style.display = 'block';
+                        restartButton.style.display = 'block';
                     }
                 }
+            });
+
+            restartButton.addEventListener('click', () => {
+                form.style.display = 'block';
+                challengeArea.style.display = 'none';
+                itemInput.disabled = false;
+                items.clear();
+                itemsList.innerHTML = '';
+                timerDisplay.textContent = 'Time: 0 seconds';
+                completionMessage.style.display = 'none';
+                restartButton.style.display = 'none';
+                timerStarted = false;
             });
         });
     </script>
