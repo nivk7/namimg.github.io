@@ -30,6 +30,12 @@
             font-size: 1.2em;
             margin-top: 10px;
         }
+        #completion-message {
+            font-size: 1.5em;
+            color: green;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +56,7 @@
             <div id="timer">Time: 0 seconds</div>
             <input type="text" id="item-input" placeholder="Enter item">
             <ul id="items-list"></ul>
+            <div id="completion-message">Challenge Completed!</div>
         </div>
     </div>
     <script>
@@ -62,6 +69,7 @@
             const itemInput = document.getElementById('item-input');
             const itemsList = document.getElementById('items-list');
             const timerDisplay = document.getElementById('timer');
+            const completionMessage = document.getElementById('completion-message');
             let number = 0;
             let category = '';
             let items = new Set();
@@ -95,7 +103,6 @@
                 if (e.key === 'Enter' && itemInput.value.trim()) {
                     const item = itemInput.value.trim();
                     if (items.has(item)) {
-                        alert('Item already entered.');
                         itemInput.value = '';
                         return;
                     }
@@ -109,8 +116,8 @@
                         clearInterval(timerInterval);
                         const endTime = Date.now();
                         const timeTaken = (endTime - startTime) / 1000;
-                        localStorage.setItem('timeTaken', timeTaken);
-                        window.location.href = 'completed.html';
+                        timerDisplay.textContent += ` (Completed in ${timeTaken} seconds!)`;
+                        completionMessage.style.display = 'block';
                     }
                 }
             });
