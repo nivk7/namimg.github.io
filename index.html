@@ -25,6 +25,7 @@
             margin: 5px 0;
             padding: 5px;
             border-radius: 5px;
+            cursor: pointer;
         }
         #timer {
             font-size: 1.2em;
@@ -141,11 +142,18 @@
                     const listItem = document.createElement('li');
                     listItem.textContent = `${index + 1}. ${item}`;
                     listItem.addEventListener('click', () => {
-                        const newItem = prompt('Edit the item:', item);
-                        if (newItem !== null) {
-                            items[index] = newItem;
-                            renderItems();
-                        }
+                        const inputField = document.createElement('input');
+                        inputField.type = 'text';
+                        inputField.value = item;
+                        inputField.addEventListener('keyup', (e) => {
+                            if (e.key === 'Enter') {
+                                items[index] = inputField.value.trim();
+                                renderItems();
+                            }
+                        });
+                        listItem.innerHTML = '';
+                        listItem.appendChild(inputField);
+                        inputField.focus();
                     });
                     itemsList.appendChild(listItem);
                 });
