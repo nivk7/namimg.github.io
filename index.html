@@ -6,7 +6,7 @@
     <title>Challenge App</title>
     <style>
         body {
-            font-family: cursive;
+            font-family: Arial, sans-serif;
             margin: 20px;
         }
         form {
@@ -134,8 +134,11 @@
                     if (!items.includes(item)) {
                         items.push(item);
                         renderItems();
+                        itemInput.value = '';
+                        itemInput.focus();
+                    } else {
+                        itemInput.value = '';
                     }
-                    itemInput.value = '';
                 }
             });
 
@@ -145,6 +148,7 @@
                     const listItem = document.createElement('li');
                     listItem.textContent = `${index + 1}. ${item}`;
                     listItem.addEventListener('click', () => {
+                        if (items.length >= number) return;
                         const inputField = document.createElement('input');
                         inputField.type = 'text';
                         inputField.value = item;
@@ -152,6 +156,7 @@
                             if (e.key === 'Enter') {
                                 items[index] = inputField.value.trim();
                                 renderItems();
+                                itemInput.focus();
                             }
                         });
                         listItem.innerHTML = '';
@@ -176,10 +181,10 @@
                 renderItems();
                 timerDisplay.textContent = 'Time: 00:00:00:000';
                 completionMessage.style.display = 'none';
-                restartButton.style.display = 'block'; // Change 'none' to 'block'
+                restartButton.style.display = 'block';
                 timerStarted = false;
             }
-        
+
             function pad(num, size = 2) {
                 let s = num + '';
                 while (s.length < size) s = '0' + s;
