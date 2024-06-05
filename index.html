@@ -37,11 +37,11 @@
             display: none;
         }
         #restart-button {
-            display: none;
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 1em;
             cursor: pointer;
+            display: none;
         }
     </style>
 </head>
@@ -60,12 +60,12 @@
         </form>
         <div id="challenge-area" style="display: none;">
             <h2 id="challenge-title"></h2>
-            <div id="timer">Time: 0 seconds</div>
+            <div id="timer">Time: 00:00:00:000</div>
             <input type="text" id="item-input" placeholder="Enter item">
             <ul id="items-list"></ul>
             <div id="completion-message">Challenge Completed!</div>
-            <button id="restart-button">Restart Challenge</button>
         </div>
+        <button id="restart-button" onclick="restartChallenge()">Restart Challenge</button>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -82,7 +82,7 @@
 
             let number = 0;
             let category = '';
-            let items = new Set();
+            let items = [];
             let timerStarted = false;
             let startTime = 0;
             let timerInterval;
@@ -119,43 +119,61 @@
                     timerStarted = true;
                     startTime = Date.now();
                     timerInterval = setInterval(() => {
-                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                        timerDisplay.textContent = `Time: ${elapsed} seconds`;
-                    }, 1000);
+                        const elapsedTime = Date.now() - startTime;
+                        const minutes = Math.floor(elapsedTime / (1000 * 60));
+                        const seconds = Math.floor((elapsedTime / 1000) % 60);
+                        const milliseconds = elapsedTime % 1000;
+                        timerDisplay.textContent = `Time: ${pad(minutes)}:${pad(seconds)}:${pad(milliseconds, 3)}`;
+                    }, 1);
                 }
 
                 if (e.key === 'Enter' && itemInput.value.trim()) {
                     const item = itemInput.value.trim();
-                    if (items.has(item)) {
-                        itemInput.value = '';
-                        return;
-                    }
-                    items.add(item);
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `${items.size}. ${item}`;
-                    itemsList.appendChild(listItem);
+                    items.push(item);
+                    renderItems();
                     itemInput.value = '';
-
-                    if (items.size >= number) {
-                        clearInterval(timerInterval);
-                        itemInput.disabled = true;
-                        completionMessage.style.display = 'block';
-                        restartButton.style.display = 'block';
-                    }
                 }
             });
 
-            restartButton.addEventListener('click', () => {
+            function renderItems() {
+                itemsList.innerHTML = '';
+                items.forEach((item, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${index + 1}. ${item}`;
+                    listItem.addEventListener('click', () => {
+                        const newItem = prompt('Edit the item:', item);
+                        if (newItem !== null) {
+                            items[index] = newItem;
+                            renderItems();
+                        }
+                    });
+                    itemsList.appendChild(listItem);
+                });
+                if (items.length >= number) {
+                    clearInterval(timerInterval);
+                    itemInput.disabled = true;
+                    completionMessage.style.display = 'block';
+                    restartButton.style.display = 'block';
+                }
+            }
+
+            function restartChallenge() {
                 form.style.display = 'block';
                 challengeArea.style.display = 'none';
                 itemInput.disabled = false;
-                items.clear();
-                itemsList.innerHTML = '';
-                timerDisplay.textContent = 'Time: 0 seconds';
+                items = [];
+                renderItems();
+                timerDisplay.textContent = 'Time: 00:00:00:000';
                 completionMessage.style.display = 'none';
                 restartButton.style.display = 'none';
                 timerStarted = false;
-            });
+            }
+
+            function pad(num, size = 2) {
+                let s = num + '';
+                while (s.length < size) s = '0' + s;
+                return s;
+            }
         });
     </script>
 </body>
