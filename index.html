@@ -42,7 +42,6 @@
             padding: 10px 20px;
             font-size: 1em;
             cursor: pointer;
-            display: none;
         }
     </style>
 </head>
@@ -86,6 +85,7 @@
             let items = [];
             let timerStarted = false;
             let startTime = 0;
+            let elapsedTime = 0;
             let timerInterval;
 
             // Load saved values if they exist
@@ -118,14 +118,8 @@
             itemInput.addEventListener('keyup', (e) => {
                 if (!timerStarted) {
                     timerStarted = true;
-                    startTime = Date.now();
-                    timerInterval = setInterval(() => {
-                        const elapsedTime = Date.now() - startTime;
-                        const minutes = Math.floor(elapsedTime / (1000 * 60));
-                        const seconds = Math.floor((elapsedTime / 1000) % 60);
-                        const milliseconds = elapsedTime % 1000;
-                        timerDisplay.textContent = `Time: ${pad(minutes)}:${pad(seconds)}:${pad(milliseconds, 3)}`;
-                    }, 1);
+                    startTime = Date.now() - elapsedTime;
+                    timerInterval = setInterval(updateTimer, 1);
                 }
 
                 if (e.key === 'Enter' && itemInput.value.trim()) {
@@ -136,12 +130,21 @@
                 }
             });
 
+            function updateTimer() {
+                elapsedTime = Date.now() - startTime;
+                const minutes = Math.floor(elapsedTime / (1000 * 60));
+                const seconds = Math.floor((elapsedTime / 1000) % 60);
+                const milliseconds = elapsedTime % 1000;
+                timerDisplay.textContent = `Time: ${pad(minutes)}:${pad(seconds)}:${pad(milliseconds, 3)}`;
+            }
+
             function renderItems() {
                 itemsList.innerHTML = '';
                 items.forEach((item, index) => {
                     const listItem = document.createElement('li');
                     listItem.textContent = `${index + 1}. ${item}`;
                     listItem.addEventListener('click', () => {
+                        if (items.length >= number) return;
                         const inputField = document.createElement('input');
                         inputField.type = 'text';
                         inputField.value = item;
@@ -171,9 +174,10 @@
                 itemInput.disabled = false;
                 items = [];
                 renderItems();
+                elapsedTime = 0;
                 timerDisplay.textContent = 'Time: 00:00:00:000';
                 completionMessage.style.display = 'none';
-                restartButton.style.display = 'none';
+                restartButton.style.display = 'block';
                 timerStarted = false;
             }
 
